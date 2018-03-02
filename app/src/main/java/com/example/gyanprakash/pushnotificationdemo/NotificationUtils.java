@@ -132,17 +132,23 @@ public class NotificationUtils {
         NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
         bigPictureStyle.setBigContentTitle(title);
         bigPictureStyle.setSummaryText(Html.fromHtml(message).toString());
-        bigPictureStyle.bigPicture(bitmap);
+        bigPictureStyle.bigPicture(bitmap).bigLargeIcon(null);
+
+        Bitmap convertedBitmap = BitmapFactory.decodeResource(mContext.getResources(),
+                R.mipmap.ic_launcher);
+
         Notification notification;
         notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)
                 .setAutoCancel(true)
                 .setContentTitle(title)
                 .setContentIntent(resultPendingIntent)
                 .setSound(alarmSound)
+                .setColorized(true)
+                .setColor(mContext.getResources().getColor(R.color.colorAccent))
                 .setStyle(bigPictureStyle)
-//                .setWhen(getTimeMilliSec(timeStamp))
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), icon))
+                .setLargeIcon(bitmap)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.ic_stat_name)
                 .setContentText(message)
                 .build();
 

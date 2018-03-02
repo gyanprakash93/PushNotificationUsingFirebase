@@ -27,7 +27,7 @@ import java.util.Date;
 public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
 
     private static final String TAG = "MyFirebaseIIDService";
-    private static final String UPLOAD_URL ="http://192.168.43.219/push_notification_demo/fcm_token.php" ;
+    private static final String UPLOAD_URL ="http://192.168.0.24/push_notification_demo/fcm_token.php" ;
     public static final String SHARED_PREF = "ah_firebase";
 
 

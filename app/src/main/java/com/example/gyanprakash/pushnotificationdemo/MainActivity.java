@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -38,9 +39,10 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String SHARED_PREF = "ah_firebase";
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final String UPLOAD_URL ="http://127.0.0.1/push_notification_demo/fcm_token.php" ;
+    private static final String UPLOAD_URL ="http://192.168.0.24/push_notification_demo/notificationcount.php" ;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     private MenuItem item;
+    private Button button;
 
     String regId;
     @Override
@@ -52,10 +54,14 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF, 0);
         regId = pref.getString("regId", null);
-
         Log.e(TAG, "Firebase reg id: " + regId);
 
-//        new PaymentStatusAsync().execute(regId);
+        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(this,SendNotificationToDevice.class));
+            }
+        });
 
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -127,52 +133,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public class PaymentStatusAsync extends AsyncTask<String, Void, String> {
-        String result;
-        String status;
-        String module;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            Log.e("pre","came");
-
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            Log.e("doin","came");
-            String data = null;
-            try {
-                data = URLEncoder.encode("method", "UTF-8")
-                        + "=" + URLEncoder.encode("addtoken", "UTF-8");
-                data += "&" + URLEncoder.encode("fcm_token", "UTF-8")
-                        + "=" + URLEncoder.encode(params[0], "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            Http sh = new Http();
-            String jsonStr = sh.makeServiceCall(UPLOAD_URL, data);
-            Log.e("response",jsonStr);
-            if (jsonStr != null) {
-                Log.e("response",jsonStr);
-                return "1";
-            } else {
-                return "400";
-            }
-
-        }
-
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-            Log.e("post","came");
-        }
-    }
-
-
     public Bitmap loadBitmap(String url)
     {
         Bitmap bm = null;
@@ -236,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             Http sh = new Http();
-            jsonStr = sh.makeServiceCall("http://192.168.43.219/push_notification_demo/notificationcount.php", data);
+            jsonStr = sh.makeServiceCall(UPLOAD_URL, data);
             if (jsonStr != null) {
                 try {
 
