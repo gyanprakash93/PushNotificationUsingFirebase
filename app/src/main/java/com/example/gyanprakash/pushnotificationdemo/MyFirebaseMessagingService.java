@@ -38,6 +38,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "FirebaseIDService";
     private static final String CHANNEL_ID = "100";
     private NotificationUtils notificationUtils;
+    private String imgUrl="http://192.168.43.219/push_notification_demo/img/";
 
 //    @Override
 //    public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -110,7 +111,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 notificationManager.createNotificationChannel(channel);
             }
 
-
         Log.e(TAG, "From: " + remoteMessage.getFrom());
 
         if (remoteMessage == null)
@@ -119,11 +119,23 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
             Log.e(TAG, "Notification Body: " + remoteMessage.getNotification().getBody());
+
+            Intent countNotification = new Intent(Config.COUNT_NOTIFICATION);
+            countNotification.putExtra("message", remoteMessage.getData().toString());
+            LocalBroadcastManager.getInstance(this).sendBroadcast(countNotification);
+            handleNotification(remoteMessage.getNotification().getBody());
+
             handleNotification(remoteMessage.getNotification().getBody());
         }
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
+
+            Intent countNotification = new Intent(Config.COUNT_NOTIFICATION);
+            countNotification.putExtra("message", remoteMessage.getData().toString());
+            LocalBroadcastManager.getInstance(this).sendBroadcast(countNotification);
+            handleNotification(remoteMessage.getData().toString());
+
             Log.e(TAG, "Data Payload: " + remoteMessage.getData().toString());
 
             try {
@@ -162,7 +174,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             String title = json.getString("title");
             String message = json.getString("message");
 //            boolean isBackground = json.getBoolean("is_background");
-            String imageUrl = json.getString("img_url");
+            String imageName = json.getString("img_url");
+            String imageUrl=imgUrl+imageName;
 //            String timestamp = json.getString("timestamp");
 //            JSONObject payload = json.getJSONObject("payload");
 

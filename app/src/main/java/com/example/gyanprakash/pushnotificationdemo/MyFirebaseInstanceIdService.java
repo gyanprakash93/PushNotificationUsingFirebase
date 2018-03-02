@@ -27,12 +27,13 @@ import java.util.Date;
 public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
 
     private static final String TAG = "MyFirebaseIIDService";
-    private static final String UPLOAD_URL ="http://127.0.0.1/push_notification_demo/fcm_token.php" ;
+    private static final String UPLOAD_URL ="http://192.168.43.219/push_notification_demo/fcm_token.php" ;
     public static final String SHARED_PREF = "ah_firebase";
 
 
     @Override
     public void onTokenRefresh() {
+        super.onTokenRefresh();
         // Get updated InstanceID token.
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, "Refreshed token: " + refreshedToken);
@@ -45,7 +46,7 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
     }
 
     private void sendRegistrationToServer(String token) {
-//        new PaymentStatusAsync().execute(token);
+        new PaymentStatusAsync().execute(token);
     }
 
     private void storeRegIdInPref(String token) {
@@ -77,8 +78,11 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
                         + "=" + URLEncoder.encode("addtoken", "UTF-8");
                 data += "&" + URLEncoder.encode("fcm_token", "UTF-8")
                         + "=" + URLEncoder.encode(params[0], "UTF-8");
+                data += "&" + URLEncoder.encode("fcm_messagetype", "UTF-8")
+                        + "=" + URLEncoder.encode("new", "UTF-8");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
+                Log.e("catchmsg",e.getMessage());
             }
             Http sh = new Http();
             String jsonStr = sh.makeServiceCall(UPLOAD_URL, data);
@@ -100,5 +104,4 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
             Log.e("post","came");
         }
     }
-
 }

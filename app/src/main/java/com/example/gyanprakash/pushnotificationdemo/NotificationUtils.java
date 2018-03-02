@@ -57,6 +57,7 @@ public class NotificationUtils {
 
 
     public void showNotificationMessage(final String title, final String message, Intent intent, String imageUrl) {
+
         // Check for empty push message
         if (TextUtils.isEmpty(message))
             return;
@@ -82,8 +83,9 @@ public class NotificationUtils {
 
         if (!TextUtils.isEmpty(imageUrl)) {
             Log.e("noti2", "came");
+            Log.e("image_url", imageUrl);
             if (imageUrl != null && imageUrl.length() > 4 && Patterns.WEB_URL.matcher(imageUrl).matches()) {
-
+                Log.e("noti3", "came");
 //                Bitmap bitmap = getBitmapFromURL(imageUrl);
                 new loadBitmapAsync(mBuilder, icon, title, message, resultPendingIntent, alarmSound).execute(imageUrl);
 //                if (bitmap != null) {
