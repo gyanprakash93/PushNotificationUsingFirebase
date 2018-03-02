@@ -4,19 +4,27 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 /**
  * Created by Xeper on 3/2/2018.
@@ -25,12 +33,57 @@ import java.net.URLEncoder;
 class SendNotificationToDevice extends AppCompatActivity {
     private static final String UPLOAD_URL ="http://192.168.0.24/push_notification_demo/fetchin_profile.php" ;
     ListView listView;
+    ArrayList<ProfileModel> profileModels;
+    ArrayAdapter modelArrayAdapter;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.send_notification_to_device);
 
         listView=findViewById(R.id.listview);
+        profileModels=new ArrayList<>();
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                final AlertDialog.Builder builder=new AlertDialog.Builder(SendNotificationToDevice.this);
+
+                View customView= getLayoutInflater().inflate(R.layout.custom_dialog, null, true);
+                builder.setView(customView);
+
+                final EditText title=customView.findViewById(R.id.title);
+                final EditText message=customView.findViewById(R.id.message);
+                Button send=customView.findViewById(R.id.send);
+                Button cancel=customView.findViewById(R.id.cancel);
+
+                final AlertDialog alertDialog=builder.create();
+                alertDialog.show();
+                send.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!title.getText().toString().isEmpty() && !message.getText().toString().isEmpty())
+                        {
+
+                        }else if (title.getText().toString().isEmpty() && message.getText().toString().isEmpty()){
+                            title.setError("Empty field");
+                            message.setError("Empty field");
+                        }else if (title.getText().toString().isEmpty()){
+                            title.setError("Empty field");
+                        }else {
+                            message.setError("Empty field");
+                        }
+                    }
+                });
+
+                cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        alertDialog.dismiss();
+                    }
+                });
+
+            }
+        });
 
     }
 
@@ -57,13 +110,21 @@ class SendNotificationToDevice extends AppCompatActivity {
             if (jsonStr != null) {
                 try {
 
-                    JSONObject jsonobject = new JSONObject(jsonStr);
-                    status = jsonobject.getString("status");
-                    Log.e("jsonarray1", jsonStr);
-                    if (Integer.parseInt(status) == 1) {
-                        count = jsonobject.getString("notification_count");
+                    JSONArray jsonArray=new JSONArray(jsonStr);
+                    for (int i=0;i<jsonArray.length();i++)
+                    {
+                        JSONObject jsonObject=jsonArray.getJSONObject(i);
+                        String profileId=jsonObject.getString("profile_id");
+                        String profileName=jsonObject.getString("profile_name");
+                        String fcmId=jsonObject.getString("fcm_id");
+                        ProfileModel profileModel=new ProfileModel();
+                        profileModel.setProfileId(profileId);
+                        profileModel.setProfileName(profileName);
+                        profileModel.setFcmId(fcmId);
 
+                        profileModels.add(profileModel);
                     }
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -78,21 +139,8 @@ class SendNotificationToDevice extends AppCompatActivity {
         }
 
         protected void onPostExecute(Boolean result) {
-            if (Integer.parseInt(status) == 1) {
-                MenuItemCompat.setActionView(item, R.layout.actionbar_badge_layout);
-                RelativeLayout notifCount = (RelativeLayout) MenuItemCompat.getActionView(item);
-                LinearLayout notificationcount = (LinearLayout) notifCount.findViewById(R.id.notificationcount);
-                notificationcount.setVisibility(View.VISIBLE);
-                TextView tv = (TextView) notifCount.findViewById(R.id.badge_textView);
-                tv.setText(count);
-            }
-            View actionView = MenuItemCompat.getActionView(item);
-            actionView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
+            modelArrayAdapter=new ArrayAdapter<ProfileModel>(SendNotificationToDevice.this,android.R.layout.activity_list_item,profileModels);
+            listView.setAdapter(modelArrayAdapter);
         }
     }
 
