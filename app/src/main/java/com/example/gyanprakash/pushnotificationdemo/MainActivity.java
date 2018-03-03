@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String SHARED_PREF = "ah_firebase";
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final String UPLOAD_URL ="http://192.168.0.24/push_notification_demo/notificationcount.php" ;
+    private static final String UPLOAD_URL ="http://192.168.0.9/push_notification_demo/notificationcount.php" ;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     private MenuItem item;
     private Button button;
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(this,SendNotificationToDevice.class));
+                startActivity(new Intent(MainActivity.this,SendNotificationToDevice.class));
             }
         });
 

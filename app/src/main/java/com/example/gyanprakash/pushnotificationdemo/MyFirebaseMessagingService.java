@@ -38,7 +38,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "FirebaseIDService";
     private static final String CHANNEL_ID = "100";
     private NotificationUtils notificationUtils;
-    private String imgUrl="http://192.168.0.24/push_notification_demo/img/";
+    private String imgUrl="http://192.168.0.9/push_notification_demo/img/";
 
 //    @Override
 //    public void onMessageReceived(RemoteMessage remoteMessage) {

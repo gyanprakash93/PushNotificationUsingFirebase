@@ -16,6 +16,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".SendNotificationToDevice"
+            android:screenOrientation="portrait"></activity>
 
         <service
             android:name=".MyFirebaseMessagingService">
